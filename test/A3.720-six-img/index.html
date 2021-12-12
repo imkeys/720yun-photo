@@ -67,12 +67,14 @@
 				if (y > .1) {
 					y -= .01
 					theta -= .001
+					// console.log(camera.position.x)
 					camera.position.set(Math.sin(theta), y, Math.cos(theta))
 				} else if (y < -.1) {
 					y += .01
 					theta -= .001
 					camera.position.set(Math.sin(theta), y, Math.cos(theta))
 				} else {
+					console.log(camera.position.x)
 					y = 0
 					controls.autoRotate = true
 					controls.autoRotateSpeed = .5
