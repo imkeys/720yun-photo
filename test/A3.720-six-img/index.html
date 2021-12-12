@@ -63,21 +63,19 @@
 			renderer.render(scene, camera);
 			controls.update();
 			if (!isDrag) {
-				console.log(camera.position.x)
 				let { x, y, z } = camera.position
 				if (y > .1) {
 					y -= .01
-					theta -= .001
+					theta -= .01
 					camera.position.set(Math.sin(theta), y, Math.cos(theta))
 				} else if (y < -.1) {
 					y += .01
-					theta -= .001
+					theta -= .01
 					camera.position.set(Math.sin(theta), y, Math.cos(theta))
 				} else {
-					console.log(camera.position.x)
 					y = 0
 					controls.autoRotate = true
-					controls.autoRotateSpeed = .5
+					controls.autoRotateSpeed = 2.5
 				}
 			}
 		}
@@ -118,7 +116,6 @@
 		function handleMouseUp () {
 			state ()
 			app.style.cursor = ''
-			
 		}
 
 		function state () {
