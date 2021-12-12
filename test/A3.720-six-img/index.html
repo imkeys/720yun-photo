@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<title>three.js webgl - panorama</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+	<link type='text/css' rel='stylesheet' href='../main.css'>
+</head>
+
+<body>
+	<div id='app'></div>
+
+	<script type='module'>
+		import * as THREE from '../../build/three.module.js';
+		import { OrbitControls } from '../../examples/jsm/controls/OrbitControls.js';
+		let app, scene, camera, controls, renderer;
+		let t0 = new Date();
+		let isDrag = false;
+		let theta = 0;
+		let timer = null;
+		let fov = 80, near = 50, far = 100;
+		const pre = 'mobile_';
+		init();
+		animate();
+
+		function init() {
+			app = document.getElementById('app');
+			renderer = new THREE.WebGLRenderer({
+				antialias: true
+			});
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			app.appendChild(renderer.domElement);
+
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far);
+			camera.position.set(0, 1, 0);
+			camera.lookAt(scene.position);
+
+			controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableDamping = true;
+			controls.rotateSpeed = - 0.3;
+
+			var geometry = new THREE.BoxGeometry(100, 100, 100);
+			const cubeTextureLoader = new THREE.CubeTextureLoader();
+			cubeTextureLoader.setPath('./img/');
+			const cubeTexture = cubeTextureLoader.load([
+				pre + 'r.jpg', pre + 'l.jpg',
+				pre + 'u.jpg', pre + 'd.jpg',
+				pre + 'f.jpg', pre + 'b.jpg'
+			]);
+			scene.background = cubeTexture;
+
+			window.addEventListener('resize', resizeHandler);
+			app.addEventListener('mousewheel', handleMousewheel, false);
+			app.addEventListener('mousedown', handleMouseDown);
+			app.addEventListener('mousemove', handleMouseMove);
+      app.addEventListener('mouseup', handleMouseUp);
+		}
+
+		function animate() {
+			requestAnimationFrame(animate);
+			renderer.render(scene, camera);
+			controls.update();
+			if (!isDrag) {
+				let { x, y, z } = camera.position
+				if (y > .1) {
+					console.log(camera.rotation.x)
+					y -= .01
+					theta -= .001
+					camera.position.set(Math.sin(theta), y, Math.cos(theta))
+				} else if (y < -.1) {
+					y += .01
+					theta -= .001
+					camera.position.set(Math.sin(theta), y, Math.cos(theta))
+				} else {
+					y = 0
+					controls.autoRotate = true
+					controls.autoRotateSpeed = .5
+				}
+			}
+		}
+		
+		function resizeHandler() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		function handleMousewheel (e) {
+			e.preventDefault();
+			controls.autoRotate = false
+			isDrag = true
+			if (e.wheelDelta) {
+				if (e.wheelDelta > 0) fov -= (near < fov ? 1 : 0);
+				if (e.wheelDelta < 0) fov += (fov < far ? 1 : 0);
+			} else if (e.detail) {
+				if (e.detail > 0) fov -= 1;
+				if (e.detail < 0) fov += 1;
+			}
+			camera.fov = fov;
+			camera.updateProjectionMatrix();
+			renderer.render(scene, camera);
+			state ()
+		}
+
+		function handleMouseMove () {
+			// nothing
+		}
+
+		function handleMouseDown () {
+			app.style.cursor = 'move'
+			controls.autoRotate = false
+			isDrag = true
+		}
+
+		function handleMouseUp () {
+			state ()
+			app.style.cursor = ''
+			
+		}
+
+		function state () {
+			clearTimeout(timer);
+			timer = setTimeout(() => {
+				controls.autoRotate = true
+				isDrag = false
+			}, 1000)
+		}
+	</script>
+</body>
+</html>

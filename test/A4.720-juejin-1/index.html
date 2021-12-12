@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<title>three.js webgl - panorama</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+	<link type='text/css' rel='stylesheet' href='../main.css'>
+</head>
+
+<body>
+	<div id='container'></div>
+
+	<script type='module'>
+		import * as THREE from '../../build/three.module.js';
+		import { OrbitControls } from '../../examples/jsm/controls/OrbitControls.js';
+		let app, scene, camera, controls, renderer, sphere;
+		let fov = 80, near = 50, far = 100 * 100;
+    let pre = 'mobile_';
+    let theta = 0;
+    let cube;
+		init(); 
+    anim()
+
+		function init() {
+      app = document.getElementById('container')
+
+      scene = new THREE.Scene()
+
+			// 创建相机
+      const w = window.innerWidth
+      const h = window.innerHeight        
+      let x = 0
+      camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000); // 透视相机
+      camera.position.set(0, 0, 0); // 设置相机位置
+      camera.lookPoint = {}; // 观察点
+      camera.lookPoint.x = 0;
+      camera.lookPoint.y = 0;
+      camera.lookPoint.z = -1;
+      camera.lookAt(camera.lookPoint.x, camera.lookPoint.y, camera.lookPoint.z);
+
+      // 创造渲染器
+      renderer = new THREE.WebGLRenderer();
+      renderer.setSize(w, h);
+      app.appendChild(renderer.domElement);
+
+      // 立方纹理
+      const cubeTextureLoader = new THREE.CubeTextureLoader();
+			cubeTextureLoader.setPath('./img/');
+      // 6张纹理图依次贴在立方体的前、后、上、下、左、右的顺序放置的
+      // const arr = [pre + 'f.jpg', pre + 'b.jpg', pre + 'u.jpg', pre + 'd.jpg', pre + 'l.jpg', pre + 'r.jpg'];
+      // const texture = textureLoader.load(arr); // 新版API
+      const texture = cubeTextureLoader.load([
+				pre + 'r.jpg', pre + 'l.jpg',
+				pre + 'u.jpg', pre + 'd.jpg',
+				pre + 'f.jpg', pre + 'b.jpg'
+			]);
+      // 几何体
+      const geometry = new THREE.BoxGeometry(50, 50, 50);
+      // 材质
+      const material = new THREE.MeshPhongMaterial({
+        envMap: texture,
+        side: THREE.DoubleSide,
+      });
+      // 创建网格
+      cube = new THREE.Mesh(geometry, material);
+      cube.position.set(-0, -0, -0);
+      scene.add(cube); // 加入场景
+
+      controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableDamping = true;
+			controls.rotateSpeed = - 0.3;
+
+      //环境光
+      const ambient = new THREE.AmbientLight(0xffffff);
+      scene.add(ambient);
+      
+      // var sphereGeometry=new THREE.SphereGeometry(60, 40, 40);
+      // var sphereMaterial=new THREE.MeshLambertMaterial({color:"#f0c945"});
+      // sphere=new THREE.Mesh(sphereGeometry,sphereMaterial);
+      // sphere.position.set(-0, -0, -0);
+      // sphere.add(cube); // 加入场景
+		}
+    
+
+    
+    function anim() {
+      renderer.render(scene, camera);
+      requestAnimationFrame(anim);
+      controls.speedY+=controls.gravity;
+      controls.posY+=controls.speedY;
+      cube.position.y=controls.posY;
+      theta+=0.02;
+      camera.rotation.y=theta;
+      camera.position.set(5*Math.sin(theta), 0, 5*Math.cos(theta));
+      if(cube.position.y<=-3){
+        controls.speedY*=-1.03;
+      };
+    };
+
+
+    const update = () => {
+      lat = Math.max(-85, Math.min(85, lat));
+      phi = THREE.Math.degToRad(90 - lat);
+      theta = THREE.Math.degToRad(lon);
+
+      target.x = 500 * Math.sin(phi) * Math.cos(theta);
+      target.y = 500 * Math.cos(phi);
+      target.z = 500 * Math.sin(phi) * Math.sin(theta);
+
+      camera.lookAt(target);
+
+      renderer.render(scene, camera);
+    };
+	</script>
+</body>
+</html>
