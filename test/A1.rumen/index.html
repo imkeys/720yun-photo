@@ -26,18 +26,27 @@
     }); //材质对象Material
     var mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
     scene.add(mesh); //网格模型添加到场景中
+    console.log(geometry.vertices)
 
 
     // 球体网格模型
     var geometry2 = new THREE.SphereGeometry(60, 40, 40);
     var material2 = new THREE.MeshLambertMaterial({
       color: 0xff00ff,
-      opacity: .5,
-      transparent: true
+      // opacity: .5,
+      // transparent: true
+    });
+    // 材质高光
+    material2 = new THREE.MeshPhongMaterial({
+      color:0xff00ff,
+      specular:0x4488ee,
+      shininess: 5
     });
     var mesh2 = new THREE.Mesh(geometry2, material2); //网格模型对象Mesh
     mesh2.translateY(100); //球体网格模型沿Y轴正方向平移120
     scene.add(mesh2);
+    mesh2.scale.set(0.5, .5, .2)
+    mesh2.position.set(0, 120, 10);
 
     // 圆柱网格模型
     var geometry3 = new THREE.CylinderGeometry(50, 50, 100, 25);
@@ -48,17 +57,41 @@
     // mesh3.translateX(120); //球体网格模型沿Y轴正方向平移120
     mesh3.position.set(110, 100, 0);
     scene.add(mesh3);
+
+
+    var geometry5 = new THREE.BoxGeometry(300, 300, 300); //创建一个立方体几何对象Geometry
+    // 点渲染模式
+    var material5 = new THREE.PointsMaterial({
+      color: 0xff0000,
+      size: 5.0 //点对象像素尺寸
+    }); //材质对象
+    var points = new THREE.Points(geometry5, material5); //点模型对象
+    scene.add(points);
+
+    var geometry6 = new THREE.BoxGeometry(200, 200, 200); //创建一个立方体几何对象Geometry
+    // 线条渲染模式
+    var material6 = new THREE.LineBasicMaterial({
+        color:0xff0000 //线条颜色
+    });//材质对象
+    // 创建线模型对象   构造函数：Line、LineLoop、LineSegments
+    var line=new THREE.Line(geometry6, material6);//线条模型对象
+    scene.add(line)
+
     
     /**
      * 光源设置
      */
+    //环境光
+    var ambient = new THREE.AmbientLight(0x444444);
+    scene.add(ambient);
     //点光源
     var point = new THREE.PointLight(0xffffff);
     point.position.set(400, 200, 300); //点光源位置
     scene.add(point); //点光源添加到场景中
-    //环境光
-    var ambient = new THREE.AmbientLight(0x444444);
-    scene.add(ambient);
+    // 点光源2  位置和point关于原点对称
+    var point2 = new THREE.PointLight(0xffffff);
+    point2.position.set(-400, -200, -300); //点光源位置
+    scene.add(point2); //点光源添加到场景中
     
     /**
      * 相机设置
