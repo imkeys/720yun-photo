@@ -1,11 +1,41 @@
 下面文件夹来自官方 https://github.com/mrdoob/three.js，用于学习之用。
 
+
 ```
 /build/
 /examples/
 ```
 
-#### skybox
+Three.js 中文文档：http://www.yanhuangxueyuan.com/threejs/docs/index.html
+
+Three.js 零基础入门教程：http://www.yanhuangxueyuan.com/Three.js/
+
+![](./test/assets/20211211160448.png)
+
+
+## 场景 Scene
+
+
+
+## 网格模型 Mesh
+
+
+
+## 光源 Light
+
+
+
+## 相机 Camera
+
+
+
+## 渲染器 Renderer
+
+
+
+
+
+## skybox
 
 六面顺序：right/left/up/down/front/back
 
