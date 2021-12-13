@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>* { padding: 0; margin: 0; }</style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import * as THREE from '/build/three.module.js';
+    import { OrbitControls } from '/examples/jsm/controls/OrbitControls.js';
+
+    let app, scene, camera, controls, renderer;
+		let fov = 80, near = 50, far = 100;
+
+    init();
+
+    function init() {
+      app = document.getElementById('app')
+      scene = new THREE.Scene()
+      renderer = new THREE.WebGLRenderer({
+				antialias: true
+			})
+      renderer.setPixelRatio(window.devicePixelRatio)
+			renderer.setSize(window.innerWidth, window.innerHeight)
+			app.appendChild(renderer.domElement)
+      
+      camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far);
+			camera.position.set(0, 1, 0);
+			camera.lookAt(scene.position);
+      
+      controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableDamping = true;
+			controls.rotateSpeed = - 0.3;
+
+      let ballMat = new THREE.MeshStandardMaterial( {
+        color: 0xffffff,
+        roughness: 0.5,
+        metalness: 1.0
+      } );
+      const cubeTextureLoader = new THREE.CubeTextureLoader();
+      cubeTextureLoader.load( "../asstes/earth_atmos_2048.jpg", function ( map ) {
+        map.anisotropy = 4;
+        map.encoding = THREE.sRGBEncoding;
+        ballMat.map = map;
+        ballMat.needsUpdate = true;
+      } );
+      scene.add(ballMat)
+
+		  animate();
+    }
+
+    function animate() {
+			requestAnimationFrame(animate);
+			renderer.render(scene, camera);
+    }
+  
+    
+    var AxesHelper = new THREE.AxesHelper(250);
+    scene.add(AxesHelper);
+  </script>
+</body>
+</html>
