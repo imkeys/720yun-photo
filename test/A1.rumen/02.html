@@ -1,67 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>* { padding: 0; margin: 0; }</style>
+	<meta charset="utf-8">
+	<title>玩转相机</title>
+    <!-- <link rel="stylesheet" type="text/css" href="./css/simple-index.css"> -->
 </head>
-
 <body>
-  <div id="app"></div>
-  <script type="module">
-    import * as THREE from '/build/three.module.js';
-    import { OrbitControls } from '/examples/jsm/controls/OrbitControls.js';
-
-    let app, scene, camera, controls, renderer;
-		let fov = 80, near = 50, far = 100;
-
-    init();
-
-    function init() {
-      app = document.getElementById('app')
-      scene = new THREE.Scene()
-      renderer = new THREE.WebGLRenderer({
-				antialias: true
-			})
-      renderer.setPixelRatio(window.devicePixelRatio)
-			renderer.setSize(window.innerWidth, window.innerHeight)
-			app.appendChild(renderer.domElement)
-      
-      camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far);
-			camera.position.set(0, 1, 0);
-			camera.lookAt(scene.position);
-      
-      controls = new OrbitControls(camera, renderer.domElement);
-			controls.enableDamping = true;
-			controls.rotateSpeed = - 0.3;
-
-      let ballMat = new THREE.MeshStandardMaterial( {
-        color: 0xffffff,
-        roughness: 0.5,
-        metalness: 1.0
-      } );
-      const cubeTextureLoader = new THREE.CubeTextureLoader();
-      cubeTextureLoader.load( "../asstes/earth_atmos_2048.jpg", function ( map ) {
-        map.anisotropy = 4;
-        map.encoding = THREE.sRGBEncoding;
-        ballMat.map = map;
-        ballMat.needsUpdate = true;
-      } );
-      scene.add(ballMat)
-
-		  animate();
-    }
-
-    function animate() {
-			requestAnimationFrame(animate);
-			renderer.render(scene, camera);
-    }
-  
+    <div id="container"></div>
+    <!-- <script type="text/javascript" src="./js/three.min.js"></script>
+    <script type="text/javascript" src="./js/DeviceOrientationControls.js"></script> -->
+    <script type="text/javascript" src="./Tween.js"></script>
     
-    var AxesHelper = new THREE.AxesHelper(250);
-    scene.add(AxesHelper);
-  </script>
+    <script type="module">
+      import * as THREE from '/build/three.module.js';
+      import { OrbitControls } from '/examples/jsm/controls/OrbitControls.js';
+      // import { TWEEN } from './tween.js'
+      class panorama{
+          constructor () {
+              this.SCREEN_WIDTH = window.innerWidth;
+              this.SCREEN_HEIGHT = window.innerHeight;
+              this.scene = new THREE.Scene();
+              this.initCamera();
+              this.initMesh();
+              this.initRenderer();
+              this.animate();
+              this.start();
+          }
+          initCamera () {
+              let aspect = this.SCREEN_WIDTH / this.SCREEN_HEIGHT;
+              this.camera = new THREE.PerspectiveCamera( 120, 0.5 * aspect, 10, 1000 );
+              this.camera.position.set(0, 500, 0);
+              this.camera.target = new THREE.Vector3( 0, -500, 0 );
+              // this.camera.fov = 500
+
+          }
+          initMesh () {
+              let geometry = new THREE.SphereGeometry( 500, 60, 40 );
+              geometry.scale( -1, 1, 1 );
+              geometry.rotateY(-Math.PI / 2)
+              let material = new THREE.MeshBasicMaterial({
+                  map: new THREE.TextureLoader().load('../assets/SphericalMap.jpg')
+              });
+              this.mesh = new THREE.Mesh( geometry, material );
+              this.scene.add( this.mesh );
+          }
+          initRenderer () {
+              let container = document.getElementById( 'container' );
+              let renderer = this.renderer = new THREE.WebGLRenderer({ logarithmicDepthBuffer: true });
+              renderer.setPixelRatio( window.devicePixelRatio );
+              renderer.setSize( window.innerWidth, window.innerHeight );
+              renderer.sortObjects = false;
+              renderer.autoClear = false;
+              container.appendChild( renderer.domElement );
+          }
+          start () {
+                  let {camera} = this;
+                  new TWEEN.Tween( { lat : 0, y : camera.position.y, fov : camera.fov } )
+                  .to( { lat: 90, y : 0, fov : 100 }, 2500 )
+                  .delay(1000)
+                  .easing(TWEEN.Easing.Cubic.InOut)
+                  .repeat(Infinity)
+                  .onUpdate(function() {
+                      let phi = THREE.Math.degToRad( this.lat );
+                      camera.target.y = -500 * Math.cos( phi );
+                      camera.target.z = -500 * Math.sin( phi );
+                      camera.position.y = this.y;
+                      camera.fov = this.fov;
+                      camera.updateProjectionMatrix();
+                  })
+                  .start()
+          }
+          animate() {
+              this.render();
+              requestAnimationFrame( ()=>{this.animate()});
+          }
+          render() {
+              TWEEN.update();
+              this.camera.lookAt( this.camera.target );
+              this.renderer.clear();
+              this.renderer.render( this.scene, this.camera );
+          }
+      }
+      new panorama();
+    </script>
 </body>
 </html>
