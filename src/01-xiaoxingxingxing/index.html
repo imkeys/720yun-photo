@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<title>小行星效果</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+	<link type='text/css' rel='stylesheet' href='../static/css/skin.css'>
+</head>
+
+<body>
+	<div id='app'></div>
+
+	<script type='module'>
+		import * as THREE from '/build/three.module.js'
+		import { OrbitControls } from '/examples/jsm/controls/OrbitControls.js'
+    // 申明变量
+    const app = document.querySelector('#app')
+    let scene, camera, renderer, controls
+    let fov = 120, near = 2, far = 1000
+    let state = 0
+    // 初始化
+    const init = () => {
+      // 场景
+      scene = new THREE.Scene()
+      // 渲染器
+      renderer = new THREE.WebGLRenderer({
+        antialias: true
+      })
+			renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      app.appendChild(renderer.domElement)
+      // 相机
+      camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far)
+      camera.position.set(0, 100, 0)
+      // 控件
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enabled = false
+      // 模型
+      const texture = new THREE.TextureLoader().load('../assets/1.jpg')
+      const sphereGeometry = new THREE.SphereGeometry(100, 100, 100)
+      sphereGeometry.scale(-1, 1.2, 1)
+      const sphereMaterial = new THREE.MeshBasicMaterial({
+        map: texture
+      })
+      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
+      scene.add(sphere)
+      // 绑定事件
+      window.addEventListener( 'resize', resizeHandler );
+    }
+    // 动画
+    const animate = () => {
+      requestAnimationFrame(animate)
+      renderer.render(scene, camera)
+      if (fov > 0) {
+        fov -= 1
+        camera.position.set(0, fov, 0)
+      }
+    }
+    // 窗口变化
+    const resizeHandler = () => {
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+    }
+    // 默认执行
+    init()
+    animate()
+	</script>
+</body>
+</html>

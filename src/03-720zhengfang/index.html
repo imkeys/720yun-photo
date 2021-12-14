@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<title>正方体六面单图贴图</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+	<link type='text/css' rel='stylesheet' href='../static/css/skin.css'>
+</head>
+
+<body>
+	<div id="app"></div>
+
+	<script type='module'>
+		import * as THREE from '/build/three.module.js'
+		import { OrbitControls } from '/examples/jsm/controls/OrbitControls.js'
+    // 申明变量
+    let app, scene, camera, renderer, controls
+    let fov = 80, near = 20, far = 100
+    
+    // 初始化
+    const init = () => {
+			app = document.querySelector('#app');
+			renderer = new THREE.WebGLRenderer();
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			app.appendChild( renderer.domElement );
+
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far);
+			camera.position.z = 0.1;
+
+			controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableZoom = false;
+			controls.enablePan = false;
+			controls.enableDamping = true;
+			controls.rotateSpeed = - 0.25;
+
+			const textures = getTexturesFromAtlasFile('../assets/s1.jpg', 6);
+			const materials = [];
+			for ( let i = 0; i < 6; i ++ ) {
+				materials.push( new THREE.MeshBasicMaterial({
+          map: textures[i]
+        }));
+			}
+			const geometry = new THREE.BoxGeometry(100, 100, 100);
+			const skyBox = new THREE.Mesh(geometry, materials);
+			skyBox.geometry.scale(1, 1, -1);
+			scene.add(skyBox);
+
+			window.addEventListener( 'resize', resizeHandler );
+      app.addEventListener('mousewheel', handleMousewheel, false);
+		}
+
+		const getTexturesFromAtlasFile = (atlasImgUrl, tilesNum) => {
+			const textures = [];
+			for (let i = 0; i < tilesNum; i++) {
+				textures[i] = new THREE.Texture();
+			}
+			new THREE.ImageLoader()
+				.load(atlasImgUrl, (image) => {
+					let canvas, context;
+					const tileWidth = image.height;
+					for (let i = 0; i < textures.length; i++) {
+						canvas = document.createElement('canvas');
+						context = canvas.getContext('2d');
+						canvas.height = tileWidth;
+						canvas.width = tileWidth;
+						context.drawImage(image, tileWidth * i, 0, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth);
+						textures[i].image = canvas;
+						textures[i].needsUpdate = true;
+					}
+				});
+			return textures;
+		}		
+
+		const animate = () => {
+			requestAnimationFrame(animate);
+			renderer.render(scene, camera);
+			controls.update();
+		}
+
+		const handleMousewheel = (e) => {
+			e.preventDefault();
+			if (e.wheelDelta) {
+				if (e.wheelDelta > 0) fov -= (near < fov ? 1 : 0);
+				if (e.wheelDelta < 0) fov += (fov < far ? 1 : 0);
+			} else if (e.detail) {
+				if (e.detail > 0) fov -= 1;
+				if (e.detail < 0) fov += 1;
+			}
+			camera.fov = fov;
+			camera.updateProjectionMatrix();
+			renderer.render(scene, camera);
+		}
+		
+		const resizeHandler = () => {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			camera.updateProjectionMatrix();
+		}
+
+    init();
+    animate();
+	</script>
+</body>
+</html>
