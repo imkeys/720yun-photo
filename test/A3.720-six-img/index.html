@@ -67,17 +67,19 @@
 				if (y > .1) {
 					y -= .01
 					theta -= .01
-					camera.position.set(Math.sin(theta), y, Math.cos(theta))
+					camera.position.set(x, y, Math.cos(theta))
 				} else if (y < -.1) {
 					y += .01
 					theta -= .01
-					camera.position.set(Math.sin(theta), y, Math.cos(theta))
+					camera.position.set(x, y, Math.cos(theta))
 				} else {
 					y = 0
 					controls.autoRotate = true
-					controls.autoRotateSpeed = 2.5
+					controls.autoRotateSpeed = 1
 				}
 			}
+			
+			camera.updateProjectionMatrix()
 		}
 		
 		function resizeHandler() {
@@ -115,6 +117,7 @@
 
 		function handleMouseUp () {
 			state ()
+			theta = 0
 			app.style.cursor = ''
 		}
 
@@ -123,7 +126,7 @@
 			timer = setTimeout(() => {
 				controls.autoRotate = true
 				isDrag = false
-			}, 1000)
+			}, 2000)
 		}
 	</script>
 </body>

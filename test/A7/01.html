@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//pchen66.github.io/js/three/three.min.js"></script>
+  <script src="//pchen66.github.io/js/panolens/panolens.min.js"></script>
+  <title>Document</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+    }
+    #panolens {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="panolens"></div>
+  <script>
+    let panorama
+    const viewer = new PANOLENS.Viewer({
+      container: document.querySelector('#panolens'),
+      controlButtons: [],
+      autoRotate: true,
+      autoRotateActivationDuration: 1000,
+      autoRotateSpeed: 1,
+      cameraFov: 100
+    });
+    panorama = new PANOLENS.ImagePanorama('1.jpg');
+    // panorama = new PANOLENS.ImageLittlePlanet('1.jpg');
+    viewer.add(panorama);
+    setTimeout(() => {
+      // viewer.setCameraFov(100)
+    }, 2000)
+    </script>
+</body>
+</html>

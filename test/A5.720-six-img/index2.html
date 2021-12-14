@@ -23,43 +23,13 @@
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
 
-    // 创建几何模型 BoxGeometry('x轴', '轴', 'z轴')
-    // const geometry = new Three.BoxGeometry(10, 10, 10)
-    
-    // 创建纹理贴图  前后  上下  左右
-    // const texture0 = new Three.TextureLoader().load('./img/mobile_r.jpg')
-    // const texture1 = new Three.TextureLoader().load('./img/mobile_l.jpg')
-    // const texture2 = new Three.TextureLoader().load('./img/mobile_u.jpg')
-    // const texture3 = new Three.TextureLoader().load('./img/mobile_d.jpg')
-    // const texture4 = new Three.TextureLoader().load('./img/mobile_f.jpg')
-    // const texture5 = new Three.TextureLoader().load('./img/mobile_b.jpg')
-
-    // // 添加材质
-    // const material = [
-    //   new Three.MeshBasicMaterial({ map: texture0, side: Three.DoubleSide }),
-    //   new Three.MeshBasicMaterial({ map: texture1, side: Three.DoubleSide }),
-    //   new Three.MeshBasicMaterial({ map: texture2, side: Three.DoubleSide }),
-    //   new Three.MeshBasicMaterial({ map: texture3, side: Three.DoubleSide }),
-    //   new Three.MeshBasicMaterial({ map: texture4, side: Three.DoubleSide }),
-    //   new Three.MeshBasicMaterial({ map: texture5, side: Three.DoubleSide })
-    // ]
-
-    // // 创建网格对象
-    // const cube = new Three.Mesh(geometry, material)
-    // // 添加到场景中去
-    // scene.add(cube)
-
-
-    // 11
+    // 将一张图贴图到球形
     let texture = new Three.TextureLoader().load('./img/1.jpg');
     let sphereGeometry = new Three.SphereGeometry(100, 100, 100);
     sphereGeometry.scale(-1, 1, 1);
     let sphereMaterial = new Three.MeshBasicMaterial({map: texture});
     let sphere = new Three.Mesh(sphereGeometry, sphereMaterial);
     scene.add(sphere);
-   
-
-    
 
     // 摄影机空间Z轴
     camera.position.set(0, 100, 0)
@@ -69,6 +39,7 @@
     // camera.position.z = 4
     
     camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
 
     // 鼠标操作缩放
@@ -89,7 +60,6 @@
       // 初始化摄像机
       camera.aspect = window.innerWidth / window.innerHeight
       camera.updateProjectionMatrix()
-
       // 初始化渲染器尺寸
       renderer.setSize(window.innerWidth, window.innerHeight)
     })
