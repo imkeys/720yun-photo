@@ -16,8 +16,7 @@
     // 申明变量
     const app = document.querySelector('#app')
     let scene, camera, renderer, controls
-    let fov = 120, near = 2, far = 1000
-    let state = 0
+    let fov = 80, near = 2, far = 1000
     // 初始化
     const init = () => {
       // 场景
@@ -31,13 +30,20 @@
       app.appendChild(renderer.domElement)
       // 相机
       camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far)
-      camera.position.set(0, 0, 0)
+      camera.position.set(0, 0, 0.01)
+      camera.lookAt(scene.position)
       // 控件
       controls = new OrbitControls(camera, renderer.domElement)
+      controls.autoRotate = true
+      controls.autoRotateSpeed = .2
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.enableDamping = true;
+      controls.rotateSpeed = - 0.2;
       // 模型
-      const texture = new THREE.TextureLoader().load('../assets/a1.jpg')
+      const texture = new THREE.TextureLoader().load('../assets/a2.jpg')
       const sphereGeometry = new THREE.SphereGeometry(100, 100, 100)
-      sphereGeometry.scale(-1, 1.2, 1)
+      sphereGeometry.scale(-1, 1, 1)
       const sphereMaterial = new THREE.MeshBasicMaterial({
         map: texture
       })
