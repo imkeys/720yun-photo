@@ -15,7 +15,8 @@
 		import { OrbitControls } from '/examples/jsm/controls/OrbitControls.js'
     // 申明变量
     let app, scene, camera, renderer, controls
-    let fov = 50, near = 1, far = 1000
+    let fov = 50, near = 30, far = 60
+		let timer = null, isDrag = false
     
     // 初始化
     const init = () => {
@@ -26,7 +27,7 @@
 			app.appendChild( renderer.domElement );
 
 			scene = new THREE.Scene();
-			camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far);
+			camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 1, 1000);
 			camera.position.set(0, 0, 1)
 			camera.lookAt(scene.position)
 
@@ -38,7 +39,6 @@
 			controls.enableDamping = true;
 			controls.rotateSpeed = - 0.25;
 
-			// const textures = getTexturesFromAtlasFile('/src/assets/sprites/2.jpg', 6);
 			const textures = getTexturesFromAtlasDir('/src/assets/720yun2.com/1/', 6);
 			const materials = [];
 			for (let i = 0; i < 6; i ++) {
@@ -53,6 +53,8 @@
 
 			window.addEventListener( 'resize', resizeHandler );
       app.addEventListener('mousewheel', handleMousewheel, false);
+			app.addEventListener('mousedown', handleMouseDown);
+      app.addEventListener('mouseup', handleMouseUp);
 		}
 
 		/**
@@ -99,51 +101,22 @@
 			})
 			// 返回数组
 			return textures
-		}
-		
-		/**
-		 * atlasImgUrl: 图片
-		 * tilesNum: 切片数量
-		 * range: 排列方式
-		 */
-		const getTexturesFromAtlasFile = (atlasImgUrl, tilesNum) => {
-			let textures = [];
-			for (let i = 0; i < tilesNum; i++) {
-				textures[i] = new THREE.Texture();
-			}
-			new THREE.ImageLoader()
-				.load(atlasImgUrl, (image) => {
-					let canvas, context;
-					const tileWidth = image.width;
-					for (let i = 0; i < textures.length; i++) {
-						canvas = document.createElement('canvas');
-						context = canvas.getContext('2d');
-						canvas.height = tileWidth;
-						canvas.width = tileWidth;
-						if (i === 4) {
-							context.translate(0, tileWidth)
-							context.rotate(- 90 * Math.PI / 180)
-						} else if (i === 5) {
-							context.translate(tileWidth, 0)
-							context.rotate(90 * Math.PI / 180)
-						}
-						context.drawImage(image, 0, tileWidth * i, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth);
-						textures[i].image = canvas;
-						textures[i].needsUpdate = true;
-					}
-				});
-			let arrays = []
-			let indexs = [1, 3, 4, 5, 0, 2]
-			indexs.map((item, index) => {
-				arrays.push(textures[item])
-			})
-			return arrays
-		}		
+		}	
 
 		const animate = () => {
 			requestAnimationFrame(animate);
 			renderer.render(scene, camera);
 			controls.update();
+			if (!isDrag) {
+				let { x, y, z } = camera.position
+				if (y > .1) {
+					y -= .001
+					camera.position.set(x, y, z)
+				} else if (y < -.1) {
+					y += .001
+					camera.position.set(x, y, z)
+				}
+			}
 		}
 
 		const handleMousewheel = (e) => {
@@ -158,12 +131,36 @@
 			camera.fov = fov;
 			camera.updateProjectionMatrix();
 			renderer.render(scene, camera);
+
+			controls.autoRotate = false
+			isDrag = true
+			clearTimeout(timer);
+			timer = setTimeout(() => {
+				controls.autoRotate = true
+				isDrag = false
+			}, 2000)
 		}
 		
 		const resizeHandler = () => {
 			camera.aspect = window.innerWidth / window.innerHeight;
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			camera.updateProjectionMatrix();
+		}
+
+		const handleMouseDown = (ev) => {
+			app.style.cursor = 'move'
+			controls.autoRotate = false
+			isDrag = true
+			clearTimeout(timer);
+		}
+
+		const handleMouseUp = (ev) => {
+			app.style.cursor = ''
+			clearTimeout(timer);
+			timer = setTimeout(() => {
+				controls.autoRotate = true
+				isDrag = false
+			}, 2000)
 		}
 
     init();
