@@ -35,9 +35,9 @@
 			controls.enableDamping = true;
 			controls.rotateSpeed = - 0.25;
 
-			const textures = getTexturesFromAtlasFile('../assets/sprites/3.jpg', 6);
+			const textures = getTexturesFromAtlasFile('../assets/sprites/2.jpg', 6, 'vertical');
 			const materials = [];
-			for ( let i = 0; i < 6; i ++ ) {
+			for (let i = 0; i < 6; i ++) {
 				materials.push( new THREE.MeshBasicMaterial({
           map: textures[i]
         }));
@@ -50,27 +50,62 @@
 			window.addEventListener( 'resize', resizeHandler );
       app.addEventListener('mousewheel', handleMousewheel, false);
 		}
-
-		const getTexturesFromAtlasFile = (atlasImgUrl, tilesNum) => {
-			const textures = [];
+		
+		/**
+		 * atlasImgUrl: 图片
+		 * tilesNum: 切片数量
+		 * range: 排列方式
+		 */
+		const getTexturesFromAtlasFile = (atlasImgUrl, tilesNum, range = 'horizontal') => {
+			let textures = [];
 			for (let i = 0; i < tilesNum; i++) {
 				textures[i] = new THREE.Texture();
 			}
 			new THREE.ImageLoader()
 				.load(atlasImgUrl, (image) => {
 					let canvas, context;
-					const tileWidth = image.height;
-					for (let i = 0; i < textures.length; i++) {
-						canvas = document.createElement('canvas');
-						context = canvas.getContext('2d');
-						canvas.height = tileWidth;
-						canvas.width = tileWidth;
-						context.drawImage(image, tileWidth * i, 0, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth);
-						textures[i].image = canvas;
-						textures[i].needsUpdate = true;
+					if (range === 'vertical') {
+						const tileWidth = image.width;
+						for (let i = 0; i < textures.length; i++) {
+							canvas = document.createElement('canvas');
+							context = canvas.getContext('2d');
+							canvas.height = tileWidth;
+							canvas.width = tileWidth;
+							if (i === 4) {
+								context.translate(0, tileWidth)
+								context.rotate(- 90 * Math.PI / 180)
+							} else if (i === 5) {
+								context.translate(tileWidth, 0)
+								context.rotate(90 * Math.PI / 180)
+							}
+							context.drawImage(image, 0, tileWidth * i, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth);
+							textures[i].image = canvas;
+							textures[i].needsUpdate = true;
+						}
+					} else if (range === 'horizontal') {
+						const tileWidth = image.height;
+						for (let i = 0; i < textures.length; i++) {
+							canvas = document.createElement('canvas');
+							context = canvas.getContext('2d');
+							canvas.height = tileWidth;
+							canvas.width = tileWidth;
+							context.drawImage(image, tileWidth * i, 0, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth);
+							textures[i].image = canvas;
+							textures[i].needsUpdate = true;
+						}
 					}
 				});
-			return textures;
+			// 720云的图片排列模式
+			if (range === 'vertical') {
+				let arrays = []
+				let indexs = [1, 3, 4, 5, 0, 2]
+				indexs.map((item, index) => {
+					arrays.push(textures[item])
+				})
+				return arrays
+			} else {
+				return textures;
+			}
 		}		
 
 		const animate = () => {
