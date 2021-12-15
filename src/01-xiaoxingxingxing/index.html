@@ -31,16 +31,10 @@
       // 相机
       camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, near, far)
       camera.position.set(0, 100, 1)
-      camera.lookAt(new THREE.Vector3(0, -100, 0))
-      // camera.updateProjectionMatrix()
+      camera.lookAt(0, 0, 0)
+      camera.updateProjectionMatrix()
       // 控件
       controls = new OrbitControls(camera, renderer.domElement);
-      // controls.autoRotate = true
-      // controls.autoRotateSpeed = .2
-      // controls.enableZoom = false;
-      // controls.enablePan = false;
-      // controls.enableDamping = true;
-      // controls.rotateSpeed = - 0.2;
       // 模型
       const texture = new THREE.TextureLoader().load('../assets/360/1.jpg')
       const sphereGeometry = new THREE.SphereGeometry(100, 100, 100)
@@ -57,13 +51,16 @@
     const animate = () => {
       requestAnimationFrame(animate)
       renderer.render(scene, camera)
-      if (fov > 50) {
+      if (fov > 60) {
         fov -= (j += .2)
         camera.fov = fov
+        camera.position.set((140 - fov), (fov-60), 1)
+        console.log(140 - fov, fov-60)
+        camera.lookAt(scene.position);
         camera.updateProjectionMatrix()
-        // camera.position.set(0, fov, 1)
-        // camera.lookAt(0, 0, 0);
       } else {
+        controls.enableDamping = true;
+        controls.rotateSpeed = -1;
       }
     }
     // 窗口变化
