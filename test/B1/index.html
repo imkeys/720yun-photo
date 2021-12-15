@@ -8,8 +8,7 @@
 </head>
 
 <body>
-	<div id="app" style="display: none;"></div>
-  <style>img { border: 1px solid #dddddd; width: 200px; height: 200px; margin: 5px; background: #eeeeee; }</style>
+	<div id="app"></div>
 
 	<script type='module'>
 		import * as THREE from '/build/three.module.js'
@@ -36,7 +35,7 @@
 			controls.enableDamping = true;
 			controls.rotateSpeed = - 0.25;
 
-			const textures = getTexturesFromAtlasFile('/src/assets/720yun2.com/1/', 6);
+			const textures = getTexturesFromAtlasFile('/src/assets/sprites/2.jpg', 6);
 			const materials = [];
 			for (let i = 0; i < 6; i ++) {
 				materials.push( new THREE.MeshBasicMaterial({
@@ -53,80 +52,44 @@
 		}
 		
 		/**
-		 * atlasImgPath: 图片文件夹
+		 * atlasImgUrl: 图片
 		 * tilesNum: 切片数量
+		 * range: 排列方式
 		 */
-		const getTexturesFromAtlasFile = (atlasImgPath, tilesNum) => {
+		const getTexturesFromAtlasFile = (atlasImgUrl, tilesNum) => {
 			let textures = [];
 			for (let i = 0; i < tilesNum; i++) {
-				textures[i] = new THREE.Texture()
-        textures[i].image = spliceCanvas(i, atlasImgPath)
-        textures[i].needsUpdate = true
+				textures[i] = new THREE.Texture();
 			}
-			// new THREE.ImageLoader()
-			// 	.load(atlasImgUrl, (image) => {
-			// 		let canvas, context;
-			// 		const tileWidth = 1152;
-      //     for (let i = 0; i < textures.length; i++) {
-      //       canvas = document.createElement('canvas');
-      //       context = canvas.getContext('2d');
-      //       canvas.height = tileWidth;
-      //       canvas.width = tileWidth;
-      //       context.drawImage(image, tileWidth * i, 0, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth);
-      //       textures[i].image = canvas;
-      //       textures[i].needsUpdate = true;
-      //     }
-			// 	});
-      
-
-      function spliceCanvas (index, path) {
-        let dir = ['l1_r', 'l1_l', 'l1_u', 'l1_d', 'l1_f', 'l1_b'][index]
-        let sprites = [
-          { name: '_1_1', width: 512, height: 512, x: 0, y: 0 },
-          { name: '_1_2', width: 512, height: 512, x: 512, y: 0 },
-          { name: '_1_3', width: 128, height: 512, x: 1024, y: 0 },
-          { name: '_2_1', width: 512, height: 512, x: 0, y: 512 },
-          { name: '_2_2', width: 512, height: 512, x: 512, y: 512 },
-          { name: '_2_3', width: 128, height: 512, x: 1024, y: 512 },
-          { name: '_3_1', width: 512, height: 128, x: 0, y: 1024 },
-          { name: '_3_2', width: 512, height: 128, x: 512, y: 1024 },
-          { name: '_3_3', width: 128, height: 128, x: 1024, y: 1024 }
-        ]
-        const tileWidth = 1152;
-        let canvas, context
-        canvas = document.createElement('canvas')
-        canvas.width = tileWidth
-        canvas.height = tileWidth
-        context = canvas.getContext('2d')
-        context.rect(0, 0, canvas.width, canvas.height)
-        context.fillStyle = '#ff0000'
-        context.fill()
-        sprites.map(item => {
-          let img = new THREE.ImageLoader().load(path + dir + item.name + '.jpg')
-          context.drawImage(img, 0, 0, 500, 500)
-        })
-        setTimeout(() => {
-          let imgsss = document.createElement('img')
-          imgsss.src = canvas.toDataURL()
-          document.body.appendChild(imgsss)
-        }, 5000)
-        setTimeout(() => {
-          console.log(111)
-          var myImage = new Image()
-          myImage.src = '/src/assets/sprites/2-hd.jpg'
-          myImage.onload = () => {
-            context.drawImage(myImage, 10, 10, 200, 200)
-            let imgsss = document.createElement('img')
-            imgsss.src = canvas.toDataURL()
-            document.body.appendChild(imgsss)
-          }
-        }, 10000)
-        return canvas
-      }
-
-      console.log(textures)
-      return textures;
-		}
+			new THREE.ImageLoader()
+				.load(atlasImgUrl, (image) => {
+					let canvas, context;
+					const tileWidth = image.width;
+					for (let i = 0; i < textures.length; i++) {
+						canvas = document.createElement('canvas');
+						context = canvas.getContext('2d');
+						canvas.height = tileWidth;
+						canvas.width = tileWidth;
+						if (i === 4) {
+							context.translate(0, tileWidth)
+							context.rotate(- 90 * Math.PI / 180)
+						} else if (i === 5) {
+							context.translate(tileWidth, 0)
+							context.rotate(90 * Math.PI / 180)
+						}
+						context.drawImage(image, 0, tileWidth * i, tileWidth, tileWidth, 0, 0, tileWidth, tileWidth);
+						textures[i].image = canvas;
+						textures[i].needsUpdate = true;
+					}
+				});
+			// 720云的图片排列模式
+			let arrays = []
+			let indexs = [1, 3, 4, 5, 0, 2]
+			indexs.map((item, index) => {
+				arrays.push(textures[item])
+			})
+			return arrays
+		}		
 
 		const animate = () => {
 			requestAnimationFrame(animate);
