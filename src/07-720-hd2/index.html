@@ -39,7 +39,7 @@
 			controls.enableDamping = true;
 			controls.rotateSpeed = - 0.25;
 
-			const textures = getTexturesFromAtlasDir('/src/assets/720yun2.com/1/', 6);
+			const textures = getTexturesFromAtlasDir('/src/assets/720yun2.com/2/', 6);
 			const materials = [];
 			for (let i = 0; i < 6; i ++) {
 				materials.push( new THREE.MeshBasicMaterial({
@@ -70,16 +70,11 @@
 			dirs.map((dir, inder) => {
 				let sprites = [
 					{ name: '_1_1', width: 512, height: 512, x: 0, y: 0 },
-					{ name: '_1_2', width: 512, height: 512, x: 512, y: 0 },
-					{ name: '_1_3', width: 128, height: 512, x: 1024, y: 0 },
-					{ name: '_2_1', width: 512, height: 512, x: 0, y: 512 },
-					{ name: '_2_2', width: 512, height: 512, x: 512, y: 512 },
-					{ name: '_2_3', width: 128, height: 512, x: 1024, y: 512 },
-					{ name: '_3_1', width: 512, height: 128, x: 0, y: 1024 },
-					{ name: '_3_2', width: 512, height: 128, x: 512, y: 1024 },
-					{ name: '_3_3', width: 128, height: 128, x: 1024, y: 1024 }
+					{ name: '_1_2', width: 256, height: 512, x: 512, y: 0 },
+					{ name: '_2_1', width: 512, height: 256, x: 0, y: 512 },
+					{ name: '_2_2', width: 256, height: 256, x: 512, y: 512 },
 				]
-				let canvas, context, tileWidth = 1152, numb = 0;
+				let canvas, context, tileWidth = 768, numb = 0;
 				canvas = document.createElement('canvas')
 				canvas.width = tileWidth
 				canvas.height = tileWidth
