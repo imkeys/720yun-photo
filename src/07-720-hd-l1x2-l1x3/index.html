@@ -14,7 +14,7 @@
 		import * as THREE from '/build/three.module.js'
 		import { OrbitControls } from '/examples/jsm/controls/OrbitControls.js'
     // 申明变量
-    let app, scene, camera, renderer, controls
+    let app, scene, camera, renderer, controls, geometry, skyBox
     let fov = 50, near = 30, far = 60
 		let timer = null, isDrag = false
     
@@ -40,7 +40,7 @@
 			controls.rotateSpeed = - 0.25;
 
 			// 这个填写文件夹名称
-			const folder = 3
+			const folder = 1
 			const textures = getTexturesFromAtlasDir(`/src/assets/720yun2.com/${folder}/`, 6);
 			const materials = [];
 			for (let i = 0; i < 6; i ++) {
@@ -48,8 +48,8 @@
           map: textures[i]
         }));
 			}
-			const geometry = new THREE.BoxGeometry(100, 100, 100);
-			const skyBox = new THREE.Mesh(geometry, materials);
+			geometry = new THREE.BoxGeometry(100, 100, 100);
+			skyBox = new THREE.Mesh(geometry, materials);
 			skyBox.geometry.scale(1, 1, -1);
 			scene.add(skyBox);
 
@@ -60,10 +60,80 @@
 		}
 
 		/**
+		 * 刷新精度
+		 */
+		const reloadMaterials = () => {
+			const folder = 3
+			const textures = getTexturesFromAtlasDir2(`/src/assets/720yun2.com/${folder}/`, 6);
+			const materials = [];
+			for (let i = 0; i < 6; i ++) {
+				materials.push( new THREE.MeshBasicMaterial({
+          map: textures[i]
+        }));
+			}
+			skyBox.material = materials
+			skyBox.needsUpdate = true
+		}
+
+		/**
 		 * atlasImgPath：文件夹
 		 * tilesNum：切片数量
 		 */
 		const getTexturesFromAtlasDir = (atlasImgPath, tilesNum) => {
+			let textures = [];
+			for (let i = 0; i < tilesNum; i++) {
+				textures[i] = new THREE.Texture()
+			}
+			const tid = 'l1'
+			let dirs = [`${tid}_r`, `${tid}_l`, `${tid}_u`, `${tid}_d`, `${tid}_f`, `${tid}_b`]
+			dirs.map((dir, inder) => {
+				let sprites = [], length = 2, y = 0, maxSize = 512, minSize = 256
+				for (let k = 1; k < length + 1; k++) {
+					let x = 0
+					for (let g = 1; g < length + 1; g++) {
+						let width = maxSize, height = maxSize
+						if (g === length) width = minSize
+						if (k === length) height = minSize
+						sprites.push({
+							name: `_${String(k).padStart(1, '0')}_${String(g).padStart(1, '0')}`,
+							width: width,
+							height: height,
+							x: x,
+							y: y
+						})
+						if (g >= 1) x += width
+						if (k >= 1 && g === length) y += height
+					}
+				}
+				let canvas, context, tileWidth = (maxSize * (length - 1) + minSize), numb = 0;
+				canvas = document.createElement('canvas')
+				canvas.width = tileWidth
+				canvas.height = tileWidth
+				context = canvas.getContext('2d')
+				context.rect(0, 0, canvas.width, canvas.height)
+				context.fillStyle = '#f5f5f5'
+				context.fill()
+				for (let j = 0; j < sprites.length; j++) {
+					const item = sprites[j]
+					new THREE.ImageLoader().load(atlasImgPath + dir + item.name + '.jpg', (img) => {
+						numb += 1
+						context.drawImage(img, 0, 0, item.width, item.height, item.x, item.y, item.width, item.height)
+						if (numb === sprites.length - 1) {
+							textures[inder].image = canvas;
+							textures[inder].needsUpdate = true
+						}
+					})
+				}
+			})
+			// 返回数组
+			return textures
+		}
+
+		/**
+		 * atlasImgPath：文件夹
+		 * tilesNum：切片数量
+		 */
+		const getTexturesFromAtlasDir2 = (atlasImgPath, tilesNum) => {
 			let textures = [];
 			for (let i = 0; i < tilesNum; i++) {
 				textures[i] = new THREE.Texture()
@@ -111,7 +181,7 @@
 			})
 			// 返回数组
 			return textures
-		}	
+		}
 
 		const animate = () => {
 			requestAnimationFrame(animate);
@@ -141,6 +211,10 @@
 			camera.fov = fov;
 			camera.updateProjectionMatrix();
 			renderer.render(scene, camera);
+
+			if (fov < 40) {
+				reloadMaterials()
+			}
 
 			controls.autoRotate = false
 			isDrag = true
