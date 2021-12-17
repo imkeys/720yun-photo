@@ -39,15 +39,19 @@ class Downloader:
     console.log('Download time: ' + str(round((time() - startTime), 2)) + 's')
   
   def initImg(self):
-    basePath = 'https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/'
+    basePath = 'https://ssl-panoimg131.720static.com/resource/prod/35a379das02/cbdjOrkwOa7/44166200/imgs/'
     noodles = ['b', 'd', 'f', 'l', 'r', 'u']
     mode = 'l3'
-    length = 6
+    length = 9
+    isFill = False
     suffix = '.jpg'
     imgs = []
     for k in noodles:
       for i in range(1, (length + 1)):
         for j in range(1, (length + 1)):
+          if (isFill):
+            i = str(i).zfill(2)
+            j = str(j).zfill(2)
           file = mode + '_' + k + '_' + str(i) + '_' + str(j) + suffix
           folder = k + '/'+ mode +'/' + str(i) + '/'
           imgs.append(basePath + folder + file)
@@ -59,6 +63,12 @@ if __name__ == '__main__':
 
 
 '''
+https://ssl-panoimg131.720static.com/resource/prod/35a379das02/cbdjOrkwOa7/44166200/imgs/l/l3/6/l3_l_6_1.jpg
+https://ssl-panoimg132.720static.com/resource/prod/b51if9b2281/83120wfOyus/44705421/imgs/r/l4/11/l4_r_11_06.jpg
+https://ssl-panoimg132.720static.com/resource/prod/b51if9b2281/83120wfOyus/44705421/imgs/f/l3/06/l3_f_06_03.jpg
+https://ssl-panoimg132.720static.com/resource/prod/b51if9b2281/83120wfOyus/44705421/imgs/r/l3/04/l3_r_04_02.jpg
+https://ssl-panoimg132.720static.com/resource/prod/51di0713308/78921uOfuuw/46435472/imgs/b/l3/04/l3_b_04_07.jpg
+https://ssl-panoimg136.720static.com/resource/prod/51di0713308/78921uOfuuw/47955443/imgs/l/l3/07/l3_l_07_09.jpg
 https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/b/l3/2/l3_b_2_2.jpg
 https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/d/l1/1/l1_d_1_1.jpg
 https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/d/l1/2/l1_d_2_2.jpg
