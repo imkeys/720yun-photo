@@ -36,7 +36,7 @@
       // 控件
       controls = new OrbitControls(camera, renderer.domElement);
       // 模型
-      const texture = new THREE.TextureLoader().load('../assets/360/4.jpg')
+      const texture = new THREE.TextureLoader().load('../assets/360/6.jpg')
       const sphereGeometry = new THREE.SphereGeometry(100, 100, 100)
       sphereGeometry.scale(-1, 1, 1)
       const sphereMaterial = new THREE.MeshBasicMaterial({
@@ -52,7 +52,7 @@
       requestAnimationFrame(animate)
       renderer.render(scene, camera)
       if (fov > 60) {
-        fov -= (j += .05)
+        fov -= (j += .005)
         camera.fov = fov
         const y = 100 * ((140-fov)/80) - 100
         camera.position.set((140 - fov), (fov - 60), 1)
