@@ -39,11 +39,11 @@ class Downloader:
     console.log('Download time: ' + str(round((time() - startTime), 2)) + 's')
   
   def initImg(self):
-    basePath = 'https://ssl-panoimg131.720static.com/resource/prod/35a379das02/cbdjOrkwOa7/44166200/imgs/'
+    basePath = 'https://ssl-panoimg135.720static.com/resource/prod/d7fi36e0f67/6e221mb5mtw/41129067/imgs/'
     noodles = ['b', 'd', 'f', 'l', 'r', 'u']
-    mode = 'l3'
-    length = 9
-    isFill = False
+    mode = 'l4'
+    length = 10
+    isFill = True
     suffix = '.jpg'
     imgs = []
     for k in noodles:
@@ -63,17 +63,5 @@ if __name__ == '__main__':
 
 
 '''
-https://ssl-panoimg131.720static.com/resource/prod/35a379das02/cbdjOrkwOa7/44166200/imgs/l/l3/6/l3_l_6_1.jpg
-https://ssl-panoimg132.720static.com/resource/prod/b51if9b2281/83120wfOyus/44705421/imgs/r/l4/11/l4_r_11_06.jpg
-https://ssl-panoimg132.720static.com/resource/prod/b51if9b2281/83120wfOyus/44705421/imgs/f/l3/06/l3_f_06_03.jpg
-https://ssl-panoimg132.720static.com/resource/prod/b51if9b2281/83120wfOyus/44705421/imgs/r/l3/04/l3_r_04_02.jpg
-https://ssl-panoimg132.720static.com/resource/prod/51di0713308/78921uOfuuw/46435472/imgs/b/l3/04/l3_b_04_07.jpg
-https://ssl-panoimg136.720static.com/resource/prod/51di0713308/78921uOfuuw/47955443/imgs/l/l3/07/l3_l_07_09.jpg
-https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/b/l3/2/l3_b_2_2.jpg
-https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/d/l1/1/l1_d_1_1.jpg
-https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/d/l1/2/l1_d_2_2.jpg
-https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/d/l1/2/l1_d_2_1.jpg
-https://ssl-panoimg131.720static.com/resource/prod/35a379das02/986jOrkvtv9/41811474/1622995819/imgs/l/l1/1/l1_l_1_2.jpg
-https://ssl-panoimg131.720static.com/resource/prod/b51if9b2281/91b27wfOybf/46844269/imgs/r/l3/05/l3_r_05_05.jpg
-https://ssl-panoimg131.720static.com/resource/prod/b51if9b2281/91b27wfOybf/46844269/imgs/r/l3/05/l3_r_05_03.jpg
+https://ssl-panoimg135.720static.com/resource/prod/6393d249s3h/103jOpmazO2/45968224/imgs/r/l3/09/l3_r_09_09.jpg
 '''
