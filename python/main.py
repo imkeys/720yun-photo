@@ -39,10 +39,10 @@ class Downloader:
     console.log('Download time: ' + str(round((time() - startTime), 2)) + 's')
   
   def initImg(self):
-    basePath = 'https://ssl-panoimg9.720static.com/resource/prod/9f6i611d5r5/c9e23cpuqcf/1090647/imgs/'
+    basePath = 'https://ssl-panoimg132.720static.com/resource/prod/b51if9b2281/83120wfOyus/44705421/imgs/'
     noodles = ['b', 'd', 'f', 'l', 'r', 'u']
-    mode = 'l4'
-    length = 9
+    mode = 'l2'
+    length = 3
     isFill = True
     suffix = '.jpg'
     imgs = []
@@ -63,5 +63,6 @@ if __name__ == '__main__':
 
 
 '''
+https://ssl-panoimg132.720static.com/resource/prod/b51if9b2281/83120wfOyus/44705421/imgs/b/l1/01/l1_b_01_02.jpg
 https://ssl-panoimg135.720static.com/resource/prod/6393d249s3h/103jOpmazO2/45968224/imgs/r/l3/09/l3_r_09_09.jpg
 '''
